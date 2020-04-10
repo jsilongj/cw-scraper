@@ -6,43 +6,42 @@ module WikiScrapeLib
 
 import Text.HTML.Scalpel
 import Data.Maybe
-import Data.Char
+import Data.Either
+import Control.Exception
 import qualified Data.Map as Map
-import Data.Tuple
+import Data.Char
 import Data.List
 import Data.List.Split
-import Control.Exception
-import Data.Either
-
+import Data.Tuple
+  
 mostfrequentwordonpage :: URL -> IO (Maybe String)
 mostfrequentwordonpage page = do
-  totalContent <- try (scrapeURL page tagsToSelect) :: IO (Either SomeException (Maybe String)) -- scrape for content
-  case totalContent of
-    Left e -> return Nothing -- return Nothing if exception
+  allContent <- try (scrapeURL page examineTags) :: IO (Either SomeException (Maybe String)) -- scrape for content
+  case allContent of
+    Left e -> return Nothing -- if exception, returns nothing
     Right x -> do
-      -- prep/pre-processing: read in stopwords and get first 4 letters of title
       stopWords <- readFile "stopwords.txt"
-      let titleFirstFourLetters = map (\x -> toLower x) $ take 4 $ last $ splitOn "/" page
+      let title1stFourLetters = map (\x -> toLower x) $ take 4 $ last $ splitOn "/" page -- getting the 1st 4 letters of the title
 
-      -- processing/cleansing of data: convert to lowercase, remove all but spaces & lower ascii char, remove apostrophes, stopwords, single letters, words with first 4 letters of title
-      let convertToLowerCase = map (\x -> toLower x) $ fromJust x
-      let removeApostrophes = unwords $ splitOn "'" convertToLowerCase
-      let removeAllButSpacesAndLowerASCII = filter (\x -> isSpace x || isAsciiLower x) removeApostrophes
-      let removeStopWords = filter (\x -> notElem x $ words stopWords) $ words removeAllButSpacesAndLowerASCII
-      let removeSingleLetterWords = filter (\x -> notElem x $ map (\x -> [x]) ['a'..'z']) removeStopWords
-      let remove4FirstLettersOfArticleTitle = filter (\x -> not $ isPrefixOf titleFirstFourLetters x) removeSingleLetterWords
+      -- Data cleansing
+      let removeApostro = unwords $ splitOn "'" $ fromJust x   -- remove apostrophes
+      let toLowerCase = map (\x -> toLower x) removeApostro    -- convert to lowercase
+      let removeExceptSpacesAndLowerASCII = filter (\x -> isSpace x || isAsciiLower x) toLowerCase                           -- remove all but spaces & lower ascii char
+      let removeStopWords = filter (\x -> notElem x $ words stopWords) $ words removeExceptSpacesAndLowerASCII               -- remove stopwords
+      let removeWordsSingleLetter = filter (\x -> notElem x $ map (\x -> [x]) ['a'..'z']) removeStopWords                    -- remove single letters
+      let removeFour1stLettersOfArticleTitle = filter (\x -> not $ isPrefixOf title1stFourLetters x) removeWordsSingleLetter -- remove words with first 4 letters of title
 
-      -- count word frequency, sort and return top result
-      let m1 = foldl(\m w -> Map.insertWith (+) w 1 m) Map.empty remove4FirstLettersOfArticleTitle
-      let swapKeyValuePairs = map swap $ Map.toList m1
-      let sortedKeyValuePairs = sort swapKeyValuePairs
-      -- print sortedKeyValuePairs
-      return $ Just $ snd $ last sortedKeyValuePairs
+      -- Counting frequencies of the word, sort and return the top result
+      let mapping = foldl(\m w -> Map.insertWith (+) w 1 m) Map.empty removeFour1stLettersOfArticleTitle
+      let swapKey = map swap $ Map.toList mapping
+      let sortedKey = sort swapKey
 
-tagsToSelect :: Scraper String String
-tagsToSelect = do
-  -- look for content within <p>, <a> and <i> tags
-  content1 <- texts "p"
-  content2 <- texts "a"
-  content3 <- texts "i"
-  return $ unwords $ content1 ++ content2 ++ content3
+      return $ Just $ snd $ last sortedKey
+
+-- Examine text within <p>, <i> and <a>
+examineTags :: Scraper String String
+examineTags = do
+  text1 <- texts "p"
+  text2 <- texts "i"
+  text3 <- texts "a"
+  return $ unwords $ text1 ++ text2 ++ text3

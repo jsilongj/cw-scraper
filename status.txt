@@ -1,14 +1,17 @@
-<Insert Student Name Here>
-GUID:
-Date:
+Jacky Si Long Jun
+GUID: 2427249S
+Date: 10/4/2020
 200 words max
 Some questions to consider:
 
 Does your code build properly with "stack build"?
+Yes, the code is able to build properly with "stack build".
 
 Are there any parts of the specification you did not implement in part
 A?
+No. All test cases were passed as well.
 
 For the 'stretch' part B, which libraries did you use and what kind of
 output did you generate?
-
+Have attempted to generate output using google translate API binding but 
+unable to implement due to time constraint. Hence, code was reverted.

@@ -1,6 +1,6 @@
-<Insert Student Name Here>
-GUID:
-Date:
+Jacky Si Long Jun
+GUID: 2427249S
+Date: 10/4/2020
 
 -- write what you want in here -- this is just some filler text --
 500 words max
@@ -9,22 +9,28 @@ For this report, I am comparing my experiences with Haskell and
 Python.  In particular, I have used the Scalpel scraping library in
 Haskell, and the equivalent scrapy library in Python.
 
-Code size: Functional code in general (and Haskell in particular) is
-  highly concise. This comes from powerful features like higher order
-  functions on lists- much more concise than for/while loop
-  control-flow structures in Python. Also, high-level operators and
-  functions are provided in the standard libraries (like Data.List).
+Code size: Code written was deliberate to be short and concise, which aims
+	   to provide readbility. The use of haskell did shorten codes that would
+	   have taken much more lines/complex in programming language such as Java which
+	   ,for example, the removal of space and lowering case for ASCII can be 
+           done but through the use of regular expression.
 
 
-Code readability: While Haskell code is particularly dense, it can be
-  difficult to read sometimes. Meaningful variable names might help.
+Code readability: The code density can be confusing at times. Thanks to haskell's
+		  Syntactic sugar, the expressions becomes much more readable.
+		  (e.g. [a,b,c] is sugar for (a:b:c:[])
+		  However, too much syntactic sugar can also make the semantics unclear.
+		  So it is important to strike a balance so that we are able to
+		  code for program and code for readability.
 
 
-Code maintainability:
-  Bug fixes? Comments?
+Code maintainability: The code is properly commented so that the reader is able to
+		      understand the meaning of the lines that was written, making 
+		      the code easier to be maintained and understandable.
 
 
-Toolchain support: Does stack work as well as pip? Is there as much
-  online support for Haskell as for Python? Does this affect developer
-  productivity at all?
+Toolchain support: Online support for Haskell is definitely much more limited in comparison
+		   to the vast amount of community help that is available to programming
+		   languages such as Java and Python. This makes developing of Haskell program
+		   challenging.
 
